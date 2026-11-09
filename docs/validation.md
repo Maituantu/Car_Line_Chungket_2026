@@ -1,0 +1,270 @@
+> **B46 hiện tại (30/10/2026)**: [Curve slowing](curve-slow-b46.md). Owner xác nhận B45 đạt **15,2s, ổn định 5/5 lượt**, Base 50 vào cua gọn hơn 55. B46 giữ nền B45, defaults 55/85, PID 12/0/0,90; giảm target theo độ lệch, chốt hướng từ mắt ngoài và giữ D qua centered ALIGN. B46 chưa đo thời gian trên xe. Các mục current cũ dưới đây là lịch sử khi có mâu thuẫn.
+
+
+> **B45 hiện tại (30/10/2026)**: [Outer-eye grip](outer-grip-b45.md). Nền B43, defaults55/85, PID12/0/0,9; chưa đo B45 trên xe. Owner báo B43 15,5s, B44 16,3s.
+
+## Kết quả B45
+
+- `scripts/test-control.ps1` pass: core44128 + IO48187 + motion13882 = **106197 integration ARM assertions**. Standalone94/4955/333/1840/60/808/716/2163 = **10969 assertions**; Python8 +18 = **26 tests** pass.
+- B45 standalone2163 cases link current B45 và archived B43 với cùng ControlState/parameters; kiểm isolated outer permission, strict raw/filtered return release, wrong-side/low-duty/Max/antiwindup, ALIGN không reserve, carry55/no boost5, cùng/ngược chiều sau narrow travel.
+- Giữ ba test image core/IO/motion và dead-strip từ harness B44 để đáp ứng map64KiB/20KiB và budget300M/60s mỗi entry; các luật firmware B44 không được giữ lại ngoài policy narrow travel được owner yêu cầu. Test fake peripheral không đo hardware timing hoặc động lực học.
+- `scripts/build.ps1`: Keil **0 Error / 0 Warning**; Code35120, RO1856, RW440, ZI10536. HEX kết thúc0x08009144, trước reserved log Flash0x0800C000.
+- `build/linefollower-B45.hex` SHA256: `48476CB6AEC486B0DA797A389DD9E874D1357452682CDD2E9FABDB65C4694D99`.
+- Record cục bộ: `build/b45-test-final.log`, `build/b45-build-result.log`, `build/outer-grip-b45-tests/command-comparison.csv`. Backup B44: `backups/B44-before-B45-20261030/`. B43/B44 HEX cũ được giữ riêng.
+
+> **B44 hiện tại (30/10/2026)**: [Chicane và Straight Cruise](chicane-cruise-b44.md). Profile50/62/85, PID14/0/0,9. B43 owner báo15,5s; chưa đo B44 trên xe.
+
+## Kết quả B44
+
+- `scripts/test-control.ps1` pass: core44128 + IO48188 + motion13882 = **106198 integration ARM assertions**. Standalone94/4955/365/1840/60/810/718/1048 = **9890 assertions**, trong đó1048 kiểm tra B44. Python parser/layout8 + receiver18 = **26 tests** pass.
+- B44 kiểm tra ALIGN corner authority, direction priority,8ms narrow travel rồi shape4ms ở cả hai chiều, negative cases broad/short/invalid, white boundary20ms, timeout/valid-first, cruise guard/Max/exit ramp và GAP sau Cruise.
+- Ba integration image dùng dead stripping để nằm trong map64KiB/20KiB và budget300M instruction/60s mỗi entry. Không tăng giới hạn emulator. Fake peripheral tests không đo thực tế motor/Flash timing.
+- `scripts/build.ps1`: Keil **0 Error / 0 Warning**; Code35948, RO1856, RW440, ZI10536. HEX kết thúc0x0800947C, trước log Flash0x0800C000.
+- `build/linefollower-B44.hex` SHA256: `B47BEE8A6013D72F727FEA6BE172E106C521D131AB6BE9DDD4D640DABE1A46D6`.
+- Backup B43 tại `backups/B43-before-B44-20261030/`. Kết quả log build/test cục bộ: `build/b44-build-result.log`, `build/b44-test-final.log`. Chưa nạp hoặc chạy B44 trên xe trong phiên này.
+
+> **B43 swing turn (30/10/2026)**: [B43](swing-turn-b43.md). Base55/Max85, Kp12/Ki0/Kd0.9.
+
+> **B42 active-eye (30/10/2026)**: [B42](active-eye-b42.md). Base55/Max85, Kp12/Ki0/**Kd0.10**.
+
+> **B41 (30/10/2026)**: [B41](corner-carve-b41.md). Profile 55/85, Kp12/Ki0/Kd0.9.
+
+> **B36 restored (30/10/2026)**: [B36 baseline](b36-restored-20261030.md).
+
+> **B40 — Bẻ lái từ vạch góc còn nhìn thấy**: [B40](branch-entry-b40.md). Profile 55/85, Kp12/Ki0/Kd0.9.
+
+> **B39 hiện tại (30/10/2026):** Góc gấp đã có hướng confirmed được thêm quyền lái trước loss: reserve có trọng số, tối đa15% inner reverse thay trần85/0; clear returning line nhả reserve, jitter nhỏ không làm bật/tắt. Giữ55/85,12/0/0,9, D shaping và recovery fixes. Map là reference, xe không encoder. Xem [B39](yaw-reserve-b39.md). Đã test/build, chưa có lap trên xe; các mục current cũ bên dưới là lịch sử.
+
+> **B38 hiện tại (30/10/2026):** Sửa timeout có thể dừng khi vừa bắt lại line và budget cộng dồn qua chuỗi góc; thêm settled inner-line40ms và trợ lực góc từ frame shape đầu. Giữ55/85,12/0/0,9 và D shaping B37. Xem [so sánh Car_Line_2026 và B38](car-line-b38.md). Đã test/build, chưa đo lap trên xe; các mục current cũ bên dưới là lịch sử.
+
+> **B37 trial hiện tại:** Owner báo B36 đạt16,11s với Base55/Max85 và Kd0,8–1 nhưng giật ở góc nối nhau. Default mới12/0/0,9,55/85; điều tiết riêng D ở vùng tâm/góc và hồi tốc nhanh chỉ khi fast exit đã yên. Xem [B37](high-kd-b37.md). Chưa có lap B37 hoặc xác nhận15s; policy cũ bên dưới là lịch sử.
+
+> **B36 trial hiện tại:** Tăng P bổ sung riêng cho góc confirmed, giữ ramp cũ; line hẹp giữa ổn định6ms được handoff/targetBase sớm, giữ hướng nhớ và budget. Base45/Max85, PID nền12/0/0,12. Xem [B36](video-corner-b36.md). Đây là thử theo mục tiêu video, chưa có lap trên xe; policy cũ bên dưới là lịch sử.
+
+> **B35 hiện tại:** Bỏ forward recovery arc28ms; mọi recovery đã đủ hướng/confirmation rẽ trực tiếp như chained turn. Valid vẫn PID ngay; giữ B34 estimator,45/85 và12/0/0,12. Rejoin dùng cap40 của pivot branch cũ. Xem [B35](immediate-corner-b35.md). Đã test/build, chưa thử xe; policy cũ bên dưới là lịch sử.
+
+> **B34 trial hiện tại:** Thử cách tính vị trí line từ cụm tín hiệu nối liền, giữ nguyên controller/PID/tốc độ B28. Source và HEX B28 trước sửa đã được xác minh; owner báo khoảng17s với cùng thông số. Xem [B34](local-centroid-b34.md). Chưa có lap B34; các ghi chú current bản cũ bên dưới là lịch sử.
+
+> **Hiện tại: B28 gốc đã khôi phục theo lựa chọn owner.** Build mới khớp hoàn toàn HEX B28 đã lưu; mốc16,3s là kết quả owner trước đây, chưa đo lại. Đây không phải B33 ghép fixes và không chứa sửa recovery B30/B32. Xem [baseline B28](original-b28-baseline.md).
+
+> **B28 hiện tại:** Base45/Max85, PID nền12/0/0,12. Tăng P từ từ ở confirmed visible corner trước khi mất line; search50 trên trắng,36 khi có tín hiệu, nhậnPD ngay khi valid. Giữ B27 arc/nét đứt/driver. Đã so ba candidate bằng command trace; chưa hardware-verified. Xem [B28](visible-corner-b28.md); policy cũ bên dưới là lịch sử khi mâu thuẫn.
+
+> **B27 hiện tại:** Base45/Max85, PID12/0/0,12; rẽ tiến bằng PWM đang có trong28ms đầu recovery rồi mới pivot nếu còn mất line. Nhận line ngay, bảo vệ retry góc vuông; lọc hướng GAP và stagger đảo chiều để tránh both-wheel zero khi retarget. Xem [B27](rolling-corner-b27.md). Chưa hardware-verified; các policy cũ bên dưới là lịch sử khi mâu thuẫn.
+
+> **B26 hiện tại:** Base45/Max85, PID12/0/0,12; TRACK cố định, P phản ứng ngay khi có line, rejoin giữ duty dưới cap40. Giữ recovery/góc vuông/nét đứt có giới hạn. Thêm cấu hình SWD rõ ràng và hướng dẫn lỗi nạp Keil. Xem [B26](corner-flow-b26.md) và [Keil/ST-Link](keil-download.md). **Chưa hardware-verified**; các policy cũ bên dưới là lịch sử khi mâu thuẫn.
+
+> **B25 hiện tại:** TRACK dùng Base cố định, bỏ boost/Straight và steering floor B24. Mất line sau góc đã xác nhận chuyển TURN trực tiếp; sửa lỗi sai số giữa ±0,5 làm đảo hướng tìm line. Giữ GAP, RECENTER/post-turn và watchdog. Mặc định Base55/Max85, PID12/0/0,12; PID Setup có5 dòng. Xem [hướng dẫn B25](fixed-base-b25.md). **Chưa hardware-verified**; các chính sách cũ bên dưới là lịch sử khi mâu thuẫn.
+
+> **B24 hiện tại:** bỏ xung BRAKE trước recovery; TURN trộn common/steering để tạo yaw ngay, valid corner có steering floor và bỏ cap32 do shape đơn thuần; reversal guard theo từng bánh. CORNER chờ cue có hướng/TURN/fault. Profile55/60/85, PID12/0/0,12. Xem [B24](speed-b24.md). Chưa hardware-verified; policy cũ bên dưới là lịch sử khi mâu thuẫn.
+
+## Validation B24 — 28/10/2026
+
+92.268ARMassertions,8parser/layout+18receiver tests pass. DirectTURN regression failed80023 onB23; B24 tests first-frame differential,dt1..4,Maxbounds/change, validshape floor/release, per-wheel/simultaneousreversal, CORNERstartupfilter, existingchain/GAP/deadline/watchdogs. Keil0error/warning; Code33468/RO1856/RW440/ZI10496bytes. HEX ends0x08008AD0 belowreserved0x0800C000. SHA256 `5B05781C3E7814AD2E46E5D81EE96CB0A5FDD6699E848F78AA4531F9749592EB` for `build/linefollower-B24.hex`. Backup `backups/B23-before-B24-20261028`. NoB24hardwarevalidation; PWMrequest/replay/registertests do not prove brakingdistance, heading orlapgain. See [speed-b24.md](speed-b24.md).
+
+> **B23 hiện tại:** sửa PROBE15 theo log thật: continuation tối đa32ms khi có guide giữa ổn định, cap32%, không tăng duty khi invalid; cue rẽ/memory/recovery có ưu tiên. Profile55/60/85, PID12/0/0,12. Xem [B23](speed-b23.md). Chưa hardware-verified; policy cũ bên dưới là lịch sử khi mâu thuẫn.
+
+## Validation B23 — 28/10/2026
+
+86.667 ARM assertions,8 parser/layout và18 receiver tests pass. Keil0 error/warning; Code33416/RO1856/RW440/ZI10496byte. HEX ends0x08008A9C < reserved log0x0800C000. SHA256 `5437B0D893D2FEEB214A25C52FE546DEDF9D5228E0FC705C5B7E01D680B67076` cho `build/linefollower-B23.hex`. Raw fixture từ hardware B22 seq2 tái hiện PROBE15 trước sửa; replay B23 xấp xỉ min32,0/rejoin32,1/end54,8% requested duty. Chưa hardware-verified B23; xem [speed-b23.md](speed-b23.md) về replay assumptions, guard tests và rủi ro. Backup `backups/B22-before-B23-20261028`.
+
+> **B22 hiện tại:** hộp đen RAM → Save Flash khi dừng → Export CSV qua PB12/CH340, 9600 8N1. Vào **6. System → N2: BLACK BOX**. Controller B21 giữ nguyên; không tự tối ưu PID. Xem [hướng dẫn B22](blackbox-b22.md). Chưa hardware-verified; nội dung cũ bên dưới là lịch sử khi mâu thuẫn.
+
+## Validation B22 — 28/10/2026
+
+- Controller/gains/estimator/motor driver byte-identical với backup B21; B22 thêm telemetry, maintenance và menu log.
+- ARMCC Cortex-M3 emulation: **84.890 assertions pass**. Thêm ring/pre-post/freeze, Save/Export interlocks, frame mới sau maintenance, CRC/torn writes/fallback/reboot, menu BLACK BOX, actual Flash/serial drivers với fake peripheral/clock.
+- **8 Python tests pass** trên CSV do C xuất trong emulator và HEX boundary/checksum.
+- Keil: **0 error / 0 warning**. Code **32.896**, RO **1.856**, RW **440**, ZI **10.496** byte.
+- Firmware HEX kết thúc trước **0x08008894**, dưới ranh giới **0x0800C000**. Scatter giới hạn48KiB firmware,16KiB cuối cho log; SRAM dùng trong20KiB.
+- Artifact: `build/linefollower-B22.hex`.
+- SHA256: `9A5CC6490BA319D6DF4E9AE73A3774222EB1E595ED7F48EBB607A2B2C5DB17B7`.
+- Backup: `backups/B21-before-B22-20261028`.
+- Chưa hardware-verified: cần Save/tắt-bật/Export trên board, kiểm tra baud PB12 bằng CH340, thử pause/resume ADC sau Save/Export và đo max_execution_us khi RUN. Fake clock/Flash không chứng minh timing/endurance hoặc quán tính xe.
+- Log chỉ lưu một cửa sổ ngắn, không cả map; xem [blackbox-b22.md](blackbox-b22.md).
+
+> **B21 hiện tại:** bỏ ENTRY_BRAKE khi line valid; tiếp tục forward PID và giảm PWM mượt ở cua mềm, giữ phanh khi mất line nhanh và bảo vệ chuỗi góc vuông. Profile 55/60/85, PID 12/0/0,12. Xem [B21](speed-b21.md). Các policy cũ bên dưới là lịch sử khi mâu thuẫn. Chưa hardware-verified.
+
+# Validation hiện tại — B09
+
+Ngày 24/10/2026. Owner báo nét đứt/cua nhẹ khựng, chọn Base cruise thay boost.
+B09 chưa hardware-verified.
+
+- Keil ARMCC 5 qua `scripts/build.ps1`: **0 error, 0 warning**; Code 22.856, RO 1.188,
+  RW 316, ZI 2.572 byte, trong target Flash 64 KiB / SRAM 20 KiB.
+- Artifact `build/linefollower-B09.hex`, SHA256
+  `DCE548C63A7A2F68CC0D9C0A42DD528BBCD837ABB0CB0D538A94E4C902F0C85F`.
+- Reproduction: test đổi error 0→500/mask0x10 rồi trắng fail 30035 trên B08 trước sửa.
+- **33.993 assertion pass** qua `scripts/test-control.ps1`. Test semantics B09: Base không boost lên Max,
+  jitter/nhóm rộng không throttle cua nhẹ; positional sharp-curve blend và wheel bounds/reflection.
+- Gap tests giữ exact L/R thay chỉ kiểm PWM dương; high-duty repeated dashes, D kick,
+  central split grace, stale/edge guide rejection, span boundary và fault không restart.
+- End-to-end fake frame từ actual estimator→controller→motor-request: 240 ms toàn trắng giữ hai output,
+  nhận lại đen trong cùng RUN không cần N3. ADC watchdog trong GAP brake ngay và không bị callback ghi đè.
+- Giữ calibration/white reference, UI/edit speeds, explicit Start/Stop, brake pulse/cancel, recovery deadline,
+  direction inversion, motor driver fake-SPL register request và command lease tests.
+- Driver/pulse/ngưỡng phanh không đổi; B09 thêm guide invalidation khi recovery. Timeout GAP nay 300 ms,
+  không nới ADC/UI/motor watchdog. Emulation không mô phỏng quán tính/current/ma sát hoặc xác nhận motor đang quay.
+- Bước tiếp: nạp B09, calibration/white reference; thử đoạn liền→nét đứt→cua nhẹ, sau đó góc 90°.
+  Không yêu cầu đọc OLED lúc chạy. Xem [cruise-gap-b09.md](cruise-gap-b09.md).
+
+## Baseline B08 (lịch sử)
+
+Ngày 24/10/2026. Owner xác nhận phanh ở profile trước ổn; yêu cầu Base/cua/90° nhanh hơn.
+Profile tốc độ B08 chưa hardware-verified.
+
+- `scripts/build.ps1`: Keil ARMCC 5, **0 error, 0 warning**. Code 22.976, RO 1.188,
+  RW 316, ZI 2.572 byte, trong target Flash 64 KiB / SRAM 20 KiB.
+- Artifact `build/linefollower-B08.hex`, SHA256
+  `E3F1E999FF153A46B53BA2FDB2DFA748B6D0EA618C8A50D2921E8E54BEFB3BF0`.
+- `scripts/test-control.ps1`: **30.223 assertion pass**. Thêm kiểm tra default profile thực sự đạt
+  Base 40, curve target 32/28, RECENTER 26, pivot 30/ramp 450 và vẫn cap theo Max thấp 15%.
+- Giữ regression boost/middle-eye/jitter, output bounds/symmetry, brake pulse/cancel, gaps,
+  shared recovery deadline, Start/Stop, UI và ADC/UI watchdog.
+- So source với backup B07: `bsp/motor.c`, BeginRecovery/RecoveryOutput, deceleration 600,
+  brake entry 40/pulse 12, loss confirm 6, GAP 200/PROBE 80 và recovery deadline 1.200 không đổi.
+- Emulation và source equality kiểm tra request/policy; không mô phỏng quãng phanh/current/ma sát/góc quay thực.
+- Bước tiếp: nạp B08, calibration/white reference, thử profile 40/75 và cua hai phía/nét đứt;
+  xem LAST RUN V/T/reason/PWM/B. Xem [speed-b08.md](speed-b08.md).
+
+## Baseline B07 (lịch sử)
+
+Ngày 24/10/2026. Owner đã thử B06 cua mềm ổn, 90° đi được nhưng quay lâu, thẳng chậm.
+B07 chưa hardware-verified.
+
+- `scripts/build.ps1`: Keil ARMCC 5, **0 error, 0 warning**. Code 22.976, RO 1.188,
+  RW 316, ZI 2.572 byte; trong target Flash 64 KiB / SRAM 20 KiB.
+- Artifact `build/linefollower-B07.hex`, SHA256
+  `5839819FBAF24A70A77344C034416DFB9882EE647C84B8283500A67C7A8D477C`.
+- Reproduction: test mới middle-eye error=500/mask=0x10 fail 40037 trên B06 trước khi sửa.
+- `scripts/test-control.ps1`: **30.217 assertion pass**. Thêm middle-eye ±0,5 pitch, jitter nhỏ,
+  centered 0x3C boost, marginal spikes, sustained drift và broad-side giảm tốc; xác nhận không full brake trên valid line.
+- End-to-end fake frame từ estimator → planner → PWM: một mắt giữa đạt boost vượt Base,
+  V/T/reason được giữ sau Stop. UI test kiểm tra vị trí dòng planner; formatter vẫn là stub.
+- Recovery: target ±24%, request đạt target với ramp mới, cap Max 15%, thấy line nhả BRAKE/pivot ngay;
+  giữ regression brake pulse/deadline, repeated gaps, Start/Stop và watchdog.
+- Actual `bsp/motor.c` vẫn được test với fake SPL register writes; không mô phỏng PWM waveform/motor dynamics.
+- Mở rộng suite từng hết budget mà chưa test_done, không tính là pass. Completion hook được giới hạn
+  tại test_done thay vì global callback mỗi instruction; giữ ARMCC -O1, timeout 60 s, budget 200 triệu instruction
+  và yêu cầu test_done. Không nới timing/watchdog của firmware để chạy test.
+- Bước tiếp: nạp B07, calibration/white reference, thử cùng Base/Max B06 và xem V/T/reason;
+  kiểm tra cua mềm/90° hai phía/nét đứt. Xem [speed-b07.md](speed-b07.md).
+
+## Baseline B06 (lịch sử)
+
+Ngày 24/10/2026. B06 chưa hardware-verified.
+
+- `scripts/build.ps1`: Keil ARMCC 5 build **0 error, 0 warning**; Code 22.412, RO 1.120,
+  RW 240, ZI 2.552 byte, trong target Flash 64 KiB / SRAM 20 KiB.
+- Artifact: `build/linefollower-B06.hex`, SHA256
+  `B02DCD17F331649DA48A57556AC56F01E39C7F9A7A24C4544EA4377127D5D43E`.
+- `scripts/test-control.ps1`: **29.256 assertion pass**, gồm baseline calibration/PD/gap/recovery,
+  planner ở Max 60/90%, deceleration, cooldown, fresh D, valid-line authority, no full brake trên dashes,
+  pulse deadline/cancel, RECENTER không mang speed cũ, reflection symmetry và output bounds.
+- Supervisor test xác nhận BRAKE là active RUN: explicit Stop giữ brake trace và không tự restart.
+- Compile actual `bsp/motor.c` với fake SPL register writes vào MMIO RAM-backed:
+  kiểm tra brake HH/CCR0, coast LL/CCR=period, PWM/polarity, reversal brake và motor lease.
+  Không mô phỏng timer waveform, cầu H thật, brake current hay động lực học bánh xe.
+- Suite mở rộng ở -O0 hết budget sau 28.934 assertion, chưa tới test_done, không tính là pass.
+  Regression chuyển ARMCC -O1, giữ timeout/instruction limit và yêu cầu hoàn tất.
+  Không đổi optimization của firmware project Keil; firmware build riêng qua uVision.
+- UI formatter vẫn stub trong emulation; không xác nhận format float bằng ARM runtime thật.
+- Owner báo Max 40% đã bám line; bộ gain tạm 2/0/5 lắc/không qua góc. Chưa có phép đo tốc độ/quãng phanh.
+- Tiếp theo: nạp B06, calibration/white reference, thử Base 30/Max 50→60 theo [high-speed.md](high-speed.md).
+
+## Baseline B05 (lịch sử)
+
+- Firmware ARMCC 5 / Cortex-M3 build pass, không có warning/error.
+- **27.588 assertion emulation pass**, gồm white reference, gap, valid-line PD invariant,
+  pivot đối chiều cùng duty, nhận lại line ngay, timeout flicker, Start/Stop, ADC/UI watchdog,
+  OLED parameter tác động thực đến output và LAST RUN sau Stop.
+- Test mới không khẳng định robot đã đi đúng góc 90°, không mô phỏng ma sát/tải/độ trượt/motor.
+- B04 từng pass test giả lập nhưng owner báo regression trên xe. Kết quả đó không phải hardware validation.
+- Owner xác nhận baseline trước bám cua nhẹ/vòng tròn, B03 cải thiện gap/cua; B04 bị xoay vòng.
+- **B05 chưa thử trên xe.** Cần nạp B05, calibration/white reference và so baseline ở Base 20/Max 30.
+- UI formatting được stub trong emulation; firmware dùng ARM C runtime thật.
+
+## Lịch sử validation
+
+# Kết quả kiểm tra B03
+
+Ngày: 24/10/2026. Repo: `D:/stm32-linefollower-spl`.
+
+## Kiểm thử tự động
+
+- ARMCC 5 build firmware: **0 error, 0 warning**.
+- Compile C cho Cortex-M3, chạy trên Unicorn với peripheral/timebase/motor stub cho supervisor/UI.
+- Kết quả: **16.795 assertion pass**.
+- Giữ regression polarity, white reference, calibration rejection, UI Start/Stop, watchdog và fault latch.
+- Bổ sung cua trái/phải, edge cue trước ambiguous mask, edge flicker không thoát recovery sớm,
+  repeated straight dashes không reset speed và không tăng duty trên trắng,
+  strict gap/turn/ambiguous timeout, gentle curve PD và mask inversion cùng steering sign.
+- Test source: `tests/test_recovery.c`, `tests/test_control.c`, `tests/test_robot.c`, `tests/test_menu.c`.
+- Build/test command ở [run-test.md](run-test.md).
+
+Test không mô phỏng động lực học GA25, ma sát, quán tính, vị trí cảm biến, ADC/I2C/TIM register;
+không đo execution time thật hoặc chứng minh xe đạt tốc độ tối đa.
+
+## Kết quả phần cứng do owner cung cấp
+
+- Manual calibration và Motor Test hoạt động.
+- B02 Base 20% bám được vòng tròn/cua nhẹ; cua 90° bị dừng.
+- Chưa có F/R hoặc chuỗi ADC lúc dừng; chưa xác định fault thực tế.
+- B03 Base 30/Max 45 với recovery mới chưa thử trên xe.
+
+## B04
+
+- Firmware build: 0 error, 0 warning; `build/linefollower-B04.hex`.
+- Emulation: **16.864 assertion pass**, gồm regression của B03.
+- Bổ sung: ADVANCE trước pivot khi có góc L, không release vào line cũ chưa clear,
+  bắt giữa chỉ chuyển ALIGN, retry không reset deadline, chuỗi trái/phải phải qua đủ các pha.
+- UI: Base/Max cùng hiện một màn, edit Max thành 40% thực sự giới hạn output về 400 permille;
+  Corner Timing qua System cho phép chỉnh Advance/Align.
+- Test formatter được stub bằng macro chỉ trong test build vì bare entry không khởi tạo ARM printf runtime.
+  Không dùng test layout để kết luận format float trên phần cứng; firmware vẫn dùng C runtime bình thường.
+- Kích thước owner: sensor–axle khoảng 16 cm, inter-corner straight khoảng 40 cm.
+- B04 chưa hardware-verified. Default Advance=350 ms tại 30% là trial estimate, không phải đo quãng đường;
+  phải hiệu chỉnh theo [square-wave.md](square-wave.md).
+
+## B10 ? 24/10/2026
+
+Keil 0 error/warning; Code23064, RO1252, RW340, ZI2572 bytes. 34.008 assertions pass, bao g?m split corner hai ph?a v? fault UI. Regression tr??c s?a fail30041. HEX v? SHA256 t?i [B10](recovery-b10.md). Ch?a th? ph?n c?ng.
+
+## B11 — 24/10/2026
+
+34.073 assertions pass, Keil 0 error/warning. Code23160 / RO1252 / RW340 / ZI2572 bytes. Test mới và SHA256 tại [B11](recovery-b11.md). Owner xác nhận B10 nét đứt/góc đơn, chưa xác nhận B11. Test không mô phỏng động lực học xe.
+
+## B12 — 24/10/2026
+
+34.085 assertions pass; Keil0 error/warning. Code23360/RO1252/RW340/ZI2580 bytes. Regression last-side before fix fail30036; new TTL/clear/opposite direction/timeout/fault tests pass. HEX hash và giới hạn tại [B12](recovery-b12.md). Chưa thử xe.
+
+## B13 — 24/10/2026
+
+34.106 assertions pass; Keil0 error/warning, Code23516/RO1252/RW340/ZI2588. Regression fail30040 trước fix trên profile B12. SHA256 và phạm vi tại [B13](recovery-b13.md). Chưa thử phần cứng.
+
+## B14 — 24/10/2026
+
+34.135 assertions pass; Keil0 error/warning, Code24576/RO1280/RW344/ZI2616. Regression on B13 fail30034. Estimator masks→controller→output and DIAG persistence/menu/timingfault tested. Hardware timing/heading not verified. See [B14](diagnosis-b14.md) for HEX hash and scope.
+
+## B15 — 26/10/2026
+
+34.709 assertions pass; Keil0 error/0 warning (Code25316/RO1280/RW344/ZI2632). Bổ sung bonus/cua mềm/guard/GAP dài giảm đúng tỷ lệ/GAP ngắn không giật. Owner xác nhận B14 45/75 chạy map; B15 chưa thử phần cứng. Chi tiết và HEX hash tại [speed-b15.md](speed-b15.md).
+
+## B16 — Profile50/80
+
+34.715 assertions pass; Keil0 error/0 warning. Test defaults50/80, target thẳng55/cua mềm54/GAP50/shape28 và menu adjustment. Giữ baseline45/75 và watchdog/recovery. Chưa thử xe; xem [profile-b16.md](profile-b16.md).
+
+## B17
+
+34.734 assertions pass; Keil0 error/0 warning, Code25484/RO1280/RW344/ZI2632. Stable curve/outward risk và high-profile repeated turns tested. Owner báo hết map nhanh hơn khoảng1s nhưng cua mềm còn khựng;60/90 phanh nhiều hơn. Không có trace hoặc phép đo quãng phanh. Chi tiết speed-b17.md.
+
+## B18
+
+34.754 assertions pass; Keil0 error/0 warning, Code26348/RO1328/RW344/ZI2688. New curve bridge/expiry/white/outward/handoff, post-turn ramp, mode durations/freeze/reset và4-page menu. UI stub không là OLED render; emulation không là hardware dynamics. Chưa có phản hồi xe B18. Xem speed-b18.md.
+
+## B19
+
+34.763 assertions pass; Keil0 error/0 warning; Code26436/RO1328/RW344/ZI2696. Thêm Straight config/controller/menu clamps và6-row layout; giữ quantization/GAP/bridge/recovery/watchdog tests. Owner xác nhận B18 ổn55/85; B19 chưa hardware-verified. HEX hash và hướng dẫn tại speed-b19.md.
+
+## B20
+
+34.861 assertions pass; Keil0 error/0 warning; Code27472/RO1360/RW352/ZI2720. Entry-brake two-sided confirmation/pulse/cancel/rearm/remainder/deadline; slew release/edge bypass; rejoin cap; supervisor raw masks, frozen ZERO/ENTRY counters, watchdog during entry và five-page menu. So backup: motor/ADC/estimator unchanged. Test instruction budget300M/timeout60s, completion required; không là hardware timing validation. B20 chưa thử xe; chi tiết/hash tại speed-b20.md.
